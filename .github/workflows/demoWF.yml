@@ -1,0 +1,20 @@
+# Foray into GitHub Actions
+
+name: demoWF
+on:
+  # This workflow triggers on a push event for the "main" branch
+  push:
+    branches: ["main"]
+
+jobs:
+  # This job is named saying-hello
+  saying-hello:
+    # Runs on the runner ubuntu-latest (GitHub owned Ubuntu virtual machine)
+    runs-on: ubuntu-latest
+    steps:
+      # Check-outs (recreates a copy of) repo files for this job to access
+      - uses: actions/checkout@v4
+      - name: Run a multi-line script
+        run: |
+          echo Hello, push to main (demoWF)
+          echo '... from workflow "demoWF"'
