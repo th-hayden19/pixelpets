@@ -1,1 +1,32 @@
-backend/node_modules
+# Python / simulator
+__pycache__/
+*.pyc
+venv/
+env/
+.env
+
+# Node / backend
+node_modules/
+dist/
+build/
+npm-debug.log*
+.env
+.env.local
+
+# React / dashboard
+dashboard/node_modules/
+dashboard/build/
+dashboard/dist/
+dashboard/.env
+
+# AWS / infra
+.aws/
+*.zip
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
