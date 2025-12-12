@@ -25,7 +25,7 @@ def init_mqtt_client(pets):
     # Subscribe to the command topic ('+' matches any topics that contain /cmd (each pet), '#' matches all topics within cmd)
     client.subscribe("pixelpets/+/cmd/#")
 
-    # Beings processing MQTT traffic for incoming messages
+    # Begins processing MQTT traffic for incoming messages
     client.loop_start()
 
     return client
