@@ -1,5 +1,5 @@
 # Python / simulator
-__pycache__/
+simulator/__pycache__/
 *.pyc
 venv/
 env/

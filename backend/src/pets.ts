@@ -50,6 +50,11 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     res.status(500).send({ error: 'Something went wrong' }); // Return a user-friendly error
 });
 
+// Catch-page directing to http://localhost:3000/pets
+app.get("/", (req, res) => {
+  res.send("PixelPets backend is running! Go to /pets to see the pet state.");
+});
+
 // req is the incoming request object (with query parameters), res is the response object with which we send (JSON) data back to the client (i.e. a browser visiting http://localhost:3000/pets, or 
 // the React dashboard requesting pet states via HTTP)
 app.get("/pets", (req, res) => {
