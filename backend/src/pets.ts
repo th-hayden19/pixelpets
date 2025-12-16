@@ -27,6 +27,9 @@ client.on("connect", () => {
 // Event listener for MQTT client receiving any message
 client.on("message", (topic, msg) => {
     try {
+        // log output
+        console.log("MQTT message received:", topic, msg.toString());
+
         // Extract ID from string array of pixelpets/{petId}/state
         const petId = topic.split("/")[1] as string;
         
