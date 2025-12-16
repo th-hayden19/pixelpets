@@ -1,7 +1,7 @@
 import random
 
 #
-# This pet.py and its while loop are the stand-in for a "device" from which MQTT payloads (sensor info) are sent
+# Think of each pet as a "device" from which MQTT payloads (sensor info) are sent
 #
 
 class Pet:
