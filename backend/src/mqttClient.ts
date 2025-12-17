@@ -1,22 +1,11 @@
-import express from "express";
-import type {Request, Response, NextFunction} from "express";
 import mqtt from "mqtt";
 import AWS from "aws-sdk";
-
-
-interface PetState {
-    id: string;
-    x: number;
-    y: number;
-    mood: string;
-    hunger: number;
-}
+import type { PetState } from "./types"
 
 // In-memory dictionary for the states of all pets
-const pets: Record<string, PetState> = {};
+export const pets: Record<string, PetState> = {};
 
-// Express object (for HTTP server), MQTT client object, and lambda client object
-const app = express()
+// MQTT client object, and lambda client object
 const client = mqtt.connect("mqtt://localhost:1883");
 const lambda = new AWS.Lambda({ region: "us-east-2" });
 
@@ -28,9 +17,6 @@ client.on("connect", () => {
 // Event listener for MQTT client receiving any message
 client.on("message", async (topic, msg) => {
     try {
-        // log output
-        //console.log("MQTT message received:", topic, msg.toString());
-
         // Extract ID from string array of pixelpets/{petId}/state
         const petId = topic.split("/")[1] as string;
         
@@ -63,24 +49,4 @@ client.on("message", async (topic, msg) => {
     }
 })
 
-// Middleware (process that happens before sending back response) can log data, errors, etc.
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err); // Log the error
-    res.status(500).send({ error: 'Something went wrong' }); // Return a user-friendly error
-});
-
-// Catch-page directing to http://localhost:3000/pets
-app.get("/", (req, res) => {
-  res.send("PixelPets backend is running! Go to /pets to see the pet state.");
-});
-
-// req is the incoming request object (with query parameters), res is the response object with which we send (JSON) data back to the client (i.e. a browser visiting http://localhost:3000/pets, or 
-// the React dashboard requesting pet states via HTTP)
-app.get("/pets", (req, res) => {
-    res.json(pets)
-})
-
-// Start the server AFTER Express and MQTT clients are fully set up and connected... otherwise MQTT won't be there to handle messages to/from server
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
-});
+export default client;
