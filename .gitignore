@@ -13,7 +13,6 @@ dist-ssr
 *.local
 build/
 npm-debug.log*
-.env
 .env.local
 
 # React / dashboard
@@ -39,7 +38,6 @@ lerna-debug.log*
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
-.idea
 .idea/
 *.suo
 *.ntvs*
