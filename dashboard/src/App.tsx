@@ -41,13 +41,6 @@ function App() {
     return () => { client.end(); } // Disconnect from broker on dismount... { } w/o return statement returns void (which TS wants) instead of MqttClient expression
   }, []);
 
-    fetchPets().then((pets) => {
-      const map = Object.fromEntries(
-        pets.map(pet => [pet.id, pet])
-      );
-      setPets(map);
-    });
-
   //return <Grid pets={pets} />;
 }
 
