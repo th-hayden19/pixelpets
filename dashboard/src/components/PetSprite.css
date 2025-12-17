@@ -12,14 +12,6 @@
 }
 
 /* Mood modifiers */
-.mood-happy {
-    filter: brightness(1.2);
-}
-
-.mood-neutral {
-    filter: brightness(1);
-}
-
-.mood-sad {
-    filter: grayscale(70%);
-}
+.pet-sprite.happy { background-color: yellow; }
+.pet-sprite.neutral { background-color: orange; }
+.pet-sprite.sad { background-color: lightblue; }

@@ -5,7 +5,7 @@ interface PetSpriteProps {
   pet: Pet
 }
 
-export function PetSprite({ pet }: { pet: Pet }) {
+export function PetSprite({ pet }: PetSpriteProps) {
     return (
         <div
             className={`pet-sprite mood-${pet.mood}`}
