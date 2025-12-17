@@ -8,7 +8,7 @@ interface PetSpriteProps {
 export function PetSprite({ pet }: PetSpriteProps) {
     return (
         <div
-            className={`pet-sprite mood-${pet.mood}`}
+            className={`pet-sprite ${pet.mood}`}
             title={`${pet.id} (Hunger: ${pet.hunger})`}
         >
             🐾

@@ -1,7 +1,7 @@
 import type { Pet } from "./types/Pet"
 import { useState, useEffect } from 'react';
-import { fetchPets } from './api/pets'
-import mqtt, { MqttClient } from 'mqtt';
+//import { fetchPets } from './api/pets'
+//import mqtt, { MqttClient } from 'mqtt';
 import Grid from './components/Grid'
 import './App.css'
 
@@ -10,13 +10,16 @@ function App() {
   // The useState hook tracks each pet state through the pairing of its Current state value (named pets) and State update function (named setPets)
   // setPets() is the only way to update the pets object, and so whenever setPets() is called there must be an update in state, in which case a re-render is desired
   // Whenever a State update function (i.e. setPets()) is called, the component it is in (i.e. App()) re-renders (returns new jsx info to the UI)
-  const [pets, setPets] = useState<Record<string, Pet>>({})  
+  const [pets, setPets] = useState<Record<string, Pet>>({  
+    "1": { id: "1", x: 0, y: 0, mood: "happy", hunger: 3 },
+    "2": { id: "2", x: 3, y: 5, mood: "sad", hunger: 8 }
+  })  
 
   // NOTE: The useEffect hook is for tasks that lie outside of React's rendering flow (i.e. subscribing to MQTT messages, fetching data from API, setting up timer etc.)
   // Essentially, things you don't really want on every single render
 
   // Hydrating frontend state
-  useEffect(() => {
+  /*useEffect(() => {
     // useEffect cannot be async so we wrap our code in an async function, loadPets
     const loadPets = async () => {
       try {
@@ -51,7 +54,7 @@ function App() {
     });
 
     return () => { client.end(); }; // Disconnect from broker on dismount... { } w/o return statement returns void (which TS wants) instead of MqttClient expression
-  }, []);
+  }, []);*/
 
   return <Grid pets={Object.values(pets)} />; // Converts pets dictionary into a Pet[] and passes it into Grid component... body of App() component, so this is called for every render
 }
