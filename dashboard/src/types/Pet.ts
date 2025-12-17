@@ -3,5 +3,5 @@ export interface Pet {
     x: number;
     y: number;
     hunger: number;
-    mood: string;
+    mood: "happy" | "neutral" | "sad";
 }

@@ -1,4 +1,5 @@
 import type { Pet } from '../types/Pet';
+import { PetSprite } from './PetSprite'
 
 interface GridProps {
   pets: Pet[];
@@ -38,14 +39,14 @@ export default function Grid({ pets }: GridProps) {
                 <div
                     key={pet.id}
                     style={{
-                        gridColumnStart: pet.x + 1,
-                        gridRowStart: pet.y + 1,
-                        background: 'pink',
-                        textAlign: 'center',
-                        borderRadius: '4px'
+                        gridColumn: pet.x + 1,
+                        gridRow: pet.y + 1,
+                        //background: 'pink',
+                        //textAlign: 'center',
+                        //borderRadius: '4px'
                     }}
                 >
-                    {pet.id}
+                    <PetSprite pet={pet} />
                 </div>
             ))}
         </div>

@@ -13,13 +13,23 @@ function App() {
   const [pets, setPets] = useState<Record<string, Pet>>({})  
 
   // NOTE: The useEffect hook is for tasks that lie outside of React's rendering flow (i.e. subscribing to MQTT messages, fetching data from API, setting up timer etc.)
+  // Essentially, things you don't really want on every single render
 
-  // HTTP fetch initial pets from backend on mount
+  // Hydrating frontend state
   useEffect(() => {
-    fetch('/api/pets')
-      .then(res => res.json())
-      .then(data => setPets(data));
-  }, []); // The empty dependency array [] means this hook only runs on component mount
+    // useEffect cannot be async so we wrap our code in an async function, loadPets
+    const loadPets = async () => {
+      try {
+        const data = await fetchPets(); // 'Consumes' the Promise that wraps the dictionary returned by fetchPets()
+        setPets(data);
+      } catch (err) {
+        console.error('Failed to fetch pets:', err);
+      }
+    };
+
+    loadPets();
+  }, []);
+
 
   // Subscribe to MQTT messages
   useEffect(() => {
@@ -41,20 +51,6 @@ function App() {
     });
 
     return () => { client.end(); }; // Disconnect from broker on dismount... { } w/o return statement returns void (which TS wants) instead of MqttClient expression
-  }, []);
-
-  // useEffect cannot be async so we wrap our functioning code in an async function loadPets
-  useEffect(() => {
-    const loadPets = async () => {
-      try {
-        const data = await fetchPets();
-        setPets(data);
-      } catch (err) {
-        console.error('Failed to fetch pets:', err);
-      }
-    };
-
-    loadPets();
   }, []);
 
   return <Grid pets={Object.values(pets)} />; // Converts pets dictionary into a Pet[] and passes it into Grid component... body of App() component, so this is called for every render
