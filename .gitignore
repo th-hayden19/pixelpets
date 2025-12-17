@@ -5,9 +5,12 @@ venv/
 env/
 .env
 
-# Node / backend
+# Node / backend, dashboard
 node_modules/
 dist/
+dist
+dist-ssr
+*.local
 build/
 npm-debug.log*
 .env
@@ -24,9 +27,22 @@ dashboard/.env
 *.zip
 
 # Logs
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # OS / editor
 .DS_Store
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+.idea
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
