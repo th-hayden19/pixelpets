@@ -2,9 +2,15 @@ import express from "express";
 import type {Request, Response, NextFunction} from "express";
 // MQTT client connects and begins listening solely due to importing the client object (executes mqttClient code)
 import client, { pets } from "./mqttClient.js"
+import cors from "cors";
 
 // Express object (for HTTP server)
 const app = express()
+
+// Explicitly allow requests from LH:5173 dashboard server to access LH:3000 backend server (Global middleware affecting all routes in server.ts)
+app.use(cors({
+  origin: "http://localhost:5173",
+}));
 
 // Middleware (process that happens before sending back response) can log data, errors, etc.
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

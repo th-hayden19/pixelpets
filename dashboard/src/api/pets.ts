@@ -2,7 +2,7 @@ import type { Pet } from "../types/Pet";
 import axios from 'axios';
 
 // Backend Express server
-const API_URL = "http://localhost:3001";
+const API_URL = "http://localhost:3000";
 
 // For hydrating
 export const fetchPets = async (): Promise<Record<string, Pet>> => {
