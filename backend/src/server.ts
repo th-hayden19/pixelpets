@@ -29,6 +29,32 @@ app.get("/pets", (req, res) => {
     res.json(pets)
 })
 
+// Receive request for feed
+app.post("/pets/:id/feed", (req, res) => {
+  //get the pet object using the petId passed in, then change that object's hunger and publish the obj
+  //console.log(typeof pets);
+  const pet = pets[req.params.id];
+  //console.log(typeof pet);
+  if (!pet) {
+    return res.status(404).send({ error: "Pet not found" });
+  }
+  pet.hunger = Math.max(pet.hunger - 10, 0);
+  client.publish(`pixelpets/${pet.id}/state`, JSON.stringify(pet));
+  res.status(200).send(pet);
+});
+
+// Receive request for cheer
+app.post("/pets/:id/cheer", (req, res) => {
+  const pet = pets[req.params.id];
+  if (!pet) {
+    return res.status(404).send({ error: "Pet not found" });
+  }
+  pet.mood = "happy";
+  // console.log(`Node publishing: pixelpets/${pet.id}/mood with ${pet.mood}`);
+  client.publish(`pixelpets/${pet.id}/mood`, JSON.stringify(pet));
+  res.status(200).send(pet);
+});
+
 // Start the server AFTER Express and MQTT clients are fully set up and connected... otherwise MQTT won't be there to handle messages to/from server
 app.listen(3000, () => {
     console.log("Server running on http://localhost:3000");

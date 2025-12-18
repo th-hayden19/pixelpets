@@ -6,7 +6,7 @@ type PetControlsProps = {
 
 export function PetControls({ petId }: PetControlsProps) {
   const sendCommand = async (action: "feed" | "cheer") => {
-    await fetch(`/pets/${petId}/${action}`, {
+    await fetch(`http://localhost:3000/pets/${petId}/${action}`, {
       method: "POST",
     });
   };

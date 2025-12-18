@@ -1,6 +1,5 @@
 import paho.mqtt.client as mqtt
 import json
-#from commands import state_change
 
 def init_mqtt_client(pets, event_queue):
     # Creates MQTT client object
@@ -11,15 +10,14 @@ def init_mqtt_client(pets, event_queue):
         try:
             # Split the topic string by '/' and return the last item: the command name
             topic_split = msg.topic.split("/")
-            print(topic_split)
-            pet_id = topic_split[1]
+            pet_id, topic_type = topic_split[1], topic_split[2]
 
             if pet_id not in pets:
                 return
 
             payload = json.loads(msg.payload.decode())
-            # Enqueues petId and updated mood for main.py event_queue
-            event_queue.put((pet_id, payload["mood"]))
+            event_queue.put((pet_id, payload))
+
 
         except Exception as e:
             print("[MQTT ERROR]", e, "Payload:", msg.payload)
@@ -30,7 +28,7 @@ def init_mqtt_client(pets, event_queue):
     # Connect to broker
     client.connect("localhost", 1883, keepalive=60)
 
-    # Subscribe to mood changes
+    # Subscribe to mood changes according to backend (lambda)
     client.subscribe("pixelpets/+/mood")
 
     # Begins processing MQTT traffic for incoming messages

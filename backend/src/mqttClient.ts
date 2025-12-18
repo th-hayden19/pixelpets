@@ -36,13 +36,14 @@ client.on("message", async (topic, msg) => {
             Payload: JSON.stringify(pet)
         }).promise();
         
-        const mood = JSON.parse(result.Payload as string).mood;
+        
+        pet.mood = JSON.parse(result.Payload as string).mood;
 
         // Confirming lambda calculates and returns mood
-        console.log(`Node publishing: pixelpets/${petId}/mood with ${mood}`);
+        //console.log(`Node publishing: pixelpets/${petId}/mood with ${mood}`);
 
         // Publish mood back to MQTT (available for subscribtion, i.e. by Python simulator or React frontend)
-        client.publish(`pixelpets/${petId}/mood`, JSON.stringify({ mood }));
+        client.publish(`pixelpets/${petId}/mood`, JSON.stringify(pet));
 
     } catch (err) {
         console.error("Failed to process MQTT message: ", err)

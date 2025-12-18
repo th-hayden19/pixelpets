@@ -19,10 +19,14 @@ def main():
     print("Simulation begun. \nPublishing updates to MQTT each second...\n")
 
     while True:
-        # Queue ensuring MQTT payload (mood change) is received before progressing simulation
+        # Queue of (id, raw-dict pet) tuples for finalizing MQTT updates
         while not event_queue.empty():
-            pet_id, mood = event_queue.get()
-            pets[pet_id].mood = mood
+            pet_id, payload = event_queue.get()
+
+            # Update all values of pet with pet-like dict from MQTT payload
+            target_pet = pets[pet_id]
+            for key, value in payload.items():
+                setattr(target_pet, key, value)
 
         for pet in pets.values():
             pet.update()
@@ -36,8 +40,8 @@ def main():
 
             print(f"Published: {topic}: {payload}")
 
-        # Pause for 1 second before looping
-        time.sleep(1)
+        # Pause for x seconds before looping
+        time.sleep(3)
 
 
 if __name__ == "__main__":
