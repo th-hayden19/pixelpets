@@ -18,8 +18,8 @@ export default function Grid({ pets }: GridProps) {
                 gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
                 gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
                 gap: '4px',
-                width: '400px',
-                height: '400px',
+                width: '600px',
+                height: '600px',
                 border: '1px solid #ccc'
             }}
         >
