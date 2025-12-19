@@ -1,19 +1,15 @@
 import type { Pet } from "./types/Pet"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { fetchPets } from './api/pets'
 import { usePetMqtt } from './mqtt/client'
 import Grid from './components/Grid'
 import './App.css'
 
-// App() is the component that renders the grid
+// App() is the component that renders the grid - its body is called for each render
 function App() {
   // The useState hook tracks each pet state through the pairing of its Current state value (named pets) and State update function (named setPets)
-  // setPets() is the only way to update the pets object, and so whenever setPets() is called there must be an update in state, in which case a re-render is desired
-  // Whenever a State update function (i.e. setPets()) is called, the component it is in (i.e. App()) re-renders (returns new jsx info to the UI)
+  // React is built to force component re-render (return new jsx info to the UI) whenever a State update function (i.e. setPets()) is called
   const [pets, setPets] = useState<Record<string, Pet>>({})  
-
-  // NOTE: The useEffect hook is for tasks that lie outside of React's rendering flow (i.e. subscribing to MQTT messages, fetching data from API, setting up timer etc.)
-  // Essentially, things you don't really want on every single render
 
   // Hydrating frontend state
   useEffect(() => {
@@ -30,14 +26,20 @@ function App() {
     loadPets();
   }, []);
 
-  usePetMqtt((pet) => {
+  // Calling  useCallback(fn, [])  returns a memoized version of fn
+  // So, handlePetUpdate is the memoized arrow function "(pet: Pet) => setPets(...)" Memoized functions are unique because they do NOT get new function objects each time the component renders
+  // So, no changes will be detected for useEffect() since its sole dep.-array variable within client.ts is onPetUpdate (which is handlePetUpdate)
+  // The result is that despite usePetMqtt running on every render, the useEffect within does not run after it runs once on mount
+  const handlePetUpdate = useCallback((pet: Pet) => {
     // When setPets() is called, the most recent pets state is passed as the argument (stored in prev)
     // What comes after => is returned... Here, parentheses wrap the => ({object literal}) to delineate from => {multi-line function block}
     // New object literal contains all of prev, and then overwrites the id-indexed pet with the passed-in pet (or adds the passed-in pet if no match)
     setPets(prev => ({ ...prev, [pet.id]: pet }));  // Sets ({ ...prev })[pet.id] equal to pet (or adds it if non-existent)
-  });
+  }, []);
 
-  return <Grid pets={Object.values(pets)} />; // Converts pets dictionary into a Pet[] and passes it into Grid component... body of App() component, so this is called for every render
+  usePetMqtt(handlePetUpdate);
+
+  return <Grid pets={Object.values(pets)} />; // Converts pets dictionary into a Pet[] and passes the jsx info to Grid component
 }
 
 export default App;
