@@ -31,14 +31,10 @@ def main():
         for pet in pets.values():
             pet.update()
 
-            # Publish telemetry
-            topic = f"pixelpets/{pet.id}/state"
-            payload = json.dumps(pet.__dict__)
+            # Publish raw states which are subbed by backend
+            client.publish(f"pixelpets/{pet.id}/state/raw", json.dumps(pet.__dict__))
 
-            # Received by backend
-            client.publish(topic, payload)
-
-            print(f"Published: {topic}: {payload}")
+            print("Published /raw: " + json.dumps(pet.__dict__))
 
         # Pause for x seconds before looping
         time.sleep(3)

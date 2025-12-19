@@ -9,17 +9,19 @@ export const pets: Record<string, PetState> = {};
 const client = mqtt.connect("mqtt://localhost:1883");
 const lambda = new AWS.Lambda({ region: "us-east-2" });
 
-// MQTT subscribe to the given topic pattern (which is the state of each pet, wildcard + for ID)
+// MQTT subscribe to all states for dictionary of pets
 client.on("connect", () => {
-    client.subscribe("pixelpets/+/state");
+    client.subscribe("pixelpets/+/state/#");
 })
 
 // Event listener for MQTT client receiving any message
 client.on("message", async (topic, msg) => {
     try {
         // Extract ID from string array of pixelpets/{petId}/state
-        const petId = topic.split("/")[1] as string;
-        
+        const splitStr = topic.split("/")
+        const petId = splitStr[1] as string;
+        const stateType = splitStr[3] as string;
+
         // Convert msg Buffer payload to a string parsed into JSON
         const pet: PetState = JSON.parse(msg.toString());
 
@@ -30,20 +32,21 @@ client.on("message", async (topic, msg) => {
         // Update the live dictionary with this pet state
         pets[petId] = pet; 
 
-        // lambda function to calculate mood of this pet
-        const result = await lambda.invoke({
-            FunctionName: "PixelPetsMood",
-            Payload: JSON.stringify(pet)
-        }).promise();
+        // lambda function to calculate mood of this pet ONLY if topic is through /raw
+        if (stateType === "raw") {
+            const result = await lambda.invoke({
+                FunctionName: "PixelPetsMood",
+                Payload: JSON.stringify(pet)
+            }).promise();
         
-        
-        pet.mood = JSON.parse(result.Payload as string).mood;
+            pet.mood = JSON.parse(result.Payload as string).mood;
 
-        // Confirming lambda calculates and returns mood
-        //console.log(`Node publishing: pixelpets/${petId}/mood with ${mood}`);
-
-        // Publish mood back to MQTT (available for subscribtion, i.e. by Python simulator or React frontend)
-        client.publish(`pixelpets/${petId}/mood`, JSON.stringify(pet));
+            // Publish mood back to MQTT (available for subscribtion, i.e. by Python simulator or React frontend)
+            client.publish(
+                `pixelpets/${petId}/state/enriched`, 
+                JSON.stringify(pet)
+            );
+        }
 
     } catch (err) {
         console.error("Failed to process MQTT message: ", err)

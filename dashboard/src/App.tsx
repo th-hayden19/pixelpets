@@ -1,7 +1,7 @@
 import type { Pet } from "./types/Pet"
 import { useState, useEffect } from 'react';
 import { fetchPets } from './api/pets'
-import mqtt from 'mqtt';
+import { usePetMqtt } from './mqtt/client'
 import Grid from './components/Grid'
 import './App.css'
 
@@ -30,37 +30,14 @@ function App() {
     loadPets();
   }, []);
 
-
-  // Subscribe to MQTT messages
-  useEffect(() => {
-    // Connect to Mosquitto broker using WebSocket port 9001
-    const client = mqtt.connect('ws://localhost:9001');
-
-    client.on('connect', () => {
-      console.log('Connected to MQTT broker');
-
-      client.subscribe('pixelpets/+/state', (err) => {
-        if (err) console.error('Failed to subscribe:', err)
-      }); // subscribe to topic
-    });
-
-    client.on('message', (_, payload) => {
-      try {
-        const updatedPet: Pet = JSON.parse(payload.toString());
-
-        // When setPets() is called, the most recent pets state is passed as the argument (stored in prev)
-        // What comes after => is returned... Here, parentheses wrap the => ({object literal}) to delineate from => {multi-line function block}
-        // New object literal contains all of prev, and then overwrites pet with updatedPet.id with updatedPet (or adds updatedPet if no match)
-        setPets(prev => ({ ...prev, [updatedPet.id]: updatedPet }));  // Sets ({ ...prev })[updatedPet.id] equal to updatedPet (or adds it if non-existent)
-      } catch (err) {
-        console.error('Failed to parse MQTT message:', err)
-      }
-    });
-
-    return () => { client.end(); }; // Disconnect from broker on dismount... { } w/o return statement returns void (which TS wants) instead of MqttClient expression
-  }, []);
+  usePetMqtt((pet) => {
+    // When setPets() is called, the most recent pets state is passed as the argument (stored in prev)
+    // What comes after => is returned... Here, parentheses wrap the => ({object literal}) to delineate from => {multi-line function block}
+    // New object literal contains all of prev, and then overwrites the id-indexed pet with the passed-in pet (or adds the passed-in pet if no match)
+    setPets(prev => ({ ...prev, [pet.id]: pet }));  // Sets ({ ...prev })[pet.id] equal to pet (or adds it if non-existent)
+  });
 
   return <Grid pets={Object.values(pets)} />; // Converts pets dictionary into a Pet[] and passes it into Grid component... body of App() component, so this is called for every render
 }
 
-export default App
+export default App;

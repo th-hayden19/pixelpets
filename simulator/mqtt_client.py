@@ -10,7 +10,7 @@ def init_mqtt_client(pets, event_queue):
         try:
             # Split the topic string by '/' and return the last item: the command name
             topic_split = msg.topic.split("/")
-            pet_id, topic_type = topic_split[1], topic_split[2]
+            pet_id = topic_split[1]
 
             if pet_id not in pets:
                 return
@@ -28,8 +28,8 @@ def init_mqtt_client(pets, event_queue):
     # Connect to broker
     client.connect("localhost", 1883, keepalive=60)
 
-    # Subscribe to mood changes according to backend (lambda)
-    client.subscribe("pixelpets/+/mood")
+    # Subscribe to state changes according to backend (lambda)
+    client.subscribe("pixelpets/+/state/enriched")
 
     # Begins processing MQTT traffic for incoming messages
     client.loop_start()

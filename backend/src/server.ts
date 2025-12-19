@@ -32,14 +32,12 @@ app.get("/pets", (req, res) => {
 // Receive request for feed
 app.post("/pets/:id/feed", (req, res) => {
   //get the pet object using the petId passed in, then change that object's hunger and publish the obj
-  //console.log(typeof pets);
   const pet = pets[req.params.id];
-  //console.log(typeof pet);
   if (!pet) {
     return res.status(404).send({ error: "Pet not found" });
   }
   pet.hunger = Math.max(pet.hunger - 10, 0);
-  client.publish(`pixelpets/${pet.id}/state`, JSON.stringify(pet));
+  client.publish(`pixelpets/${pet.id}/state/enriched`, JSON.stringify(pet));
   res.status(200).send(pet);
 });
 
@@ -50,8 +48,7 @@ app.post("/pets/:id/cheer", (req, res) => {
     return res.status(404).send({ error: "Pet not found" });
   }
   pet.mood = "happy";
-  // console.log(`Node publishing: pixelpets/${pet.id}/mood with ${pet.mood}`);
-  client.publish(`pixelpets/${pet.id}/mood`, JSON.stringify(pet));
+  client.publish(`pixelpets/${pet.id}/state/enriched`, JSON.stringify(pet));
   res.status(200).send(pet);
 });
 
